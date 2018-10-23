@@ -1,0 +1,53 @@
+version: "3"
+services:
+  test:
+    image: "legman-logstash"
+    build: .
+  leakage:
+    image: "legman-logstash"
+    build: .
+    command: npm run leakage
+  lint:
+    image: "legman-logstash"
+    build: .
+    command: npm run lint
+  example:
+    image: "legman-logstash"
+    environment:
+      LOGSTASH_HOSTNAME: "logstash"
+    depends_on:
+      - logstash
+      - kibana
+    build: .
+    command: sh -c "cd example && npx tsc -p . && node ."
+
+  elasticsearch:
+    image: elasticsearch:6.4.2
+    expose:
+    - 9200
+    - 9300
+    environment:
+    - cluster.name=example-elk-cluster
+    volumes:
+    - es-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: kibana:6.4.2
+    depends_on:
+    - elasticsearch
+    ports:
+    - "5601:5601"
+    environment:
+      SERVER_NAME: kibana.atd-schubert.com
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+
+  logstash:
+    image: logstash
+    depends_on:
+    - elasticsearch
+    command: ["-e", 'input { tcp { port => 9500 codec => json_lines } } output { elasticsearch { index => "example" hosts => ["elasticsearch:9200"] } }']
+    expose:
+    - 9500
+
+volumes:
+  es-data:
