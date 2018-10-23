@@ -1,8 +1,9 @@
 {
   "name": "legman-logstash",
   "version": "1.0.0",
-  "description": "A simple library build for streaming in strictly object mode",
+  "description": "A writeable stream build for sending messages from a Legman stream into a Logstash instance",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "transpile": "tsc -p .",
     "lint": "tslint ts/*.ts",
