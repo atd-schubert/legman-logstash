@@ -1,5 +1,5 @@
-import { Socket } from "net";
 import Legman from "legman";
+import { Socket } from "net";
 import { Writable } from "stream";
 
 const NEWLINE = "\n";
